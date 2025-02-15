@@ -22,6 +22,13 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser, Ap
     {
         base.OnModelCreating(builder);
 
+        //builder.Entity<Course>().HasQueryFilter(x => !x.IsDeleted);
+
+        //builder.Entity<ApplicationUser>().HasQueryFilter(x => !x.IsDeleted);
+
+        //builder.Entity<SocialMedia>().HasQueryFilter(x => !x.IsDeleted);
+
+
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

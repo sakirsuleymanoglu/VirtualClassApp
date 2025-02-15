@@ -18,8 +18,6 @@ public sealed class StudentRepository(ApplicationDbContext context) : Repository
         List<Student> students;
         int count;
 
-        query = query.Include(x => x.Courses);
-
         if (parametersAction == null)
         {
             students = await query.ToListAsync(cancellationToken);

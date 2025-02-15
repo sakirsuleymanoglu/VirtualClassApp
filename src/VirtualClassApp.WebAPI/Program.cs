@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
-using VirtualClassApp.Application.Abstractions.Repositories.Teachers;
+using VirtualClassApp.Application;
 using VirtualClassApp.Persistence;
+using VirtualClassApp.WebAPI.Constants;
+using VirtualClassApp.WebAPI.EndpointsMappings.Courses;
+using VirtualClassApp.WebAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 
 builder.Services.AddOpenApi();
@@ -26,20 +28,7 @@ app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/api/teachers", [HttpGet]
-async (ITeacherRepository teacherRepository) =>
-{
-    var students = await teacherRepository.GetAllAsync(x =>
-    {
-   
-    });
-
-    return Results.Ok(students);
-});
-
-
-
-
+app.MapEndpoints(new CoursesEndpointsMapper(BaseRoutes.Courses));
 
 app.Run();
 

@@ -9,6 +9,9 @@ using VirtualClassApp.Persistence.Extensions;
 namespace VirtualClassApp.Persistence.Repositories;
 public abstract class Repository<T>(ApplicationDbContext context) : IRepository<T> where T : class, IEntity, new()
 {
+
+    protected ApplicationDbContext Context => context;
+
     protected DbSet<T> Table => context.Set<T>();
 
     protected abstract IQueryable<T> Query { get; }
@@ -29,10 +32,10 @@ public abstract class Repository<T>(ApplicationDbContext context) : IRepository<
         return query;
     }
 
-    public async Task AddAsync(T entity, CancellationToken cancellationToken = default) => await Table.AddAsync(entity, cancellationToken);
+    public virtual async Task AddAsync(T entity, CancellationToken cancellationToken = default) => await Table.AddAsync(entity, cancellationToken);
 
-    public void Delete(T entity) => Table.Remove(entity);
-    public void Update(T entity) => Table.Update(entity);
+    public virtual void Delete(T entity) => Table.Remove(entity);
+    public virtual void Update(T entity) => Table.Update(entity);
 
     public abstract Task<GetAllResponse<T>> GetAllAsync(Action<GetAllParameters<T>>? parametersAction = null, CancellationToken cancellationToken = default);
 

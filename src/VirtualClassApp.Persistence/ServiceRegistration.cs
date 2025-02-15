@@ -2,12 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtualClassApp.Application.Abstractions.Repositories;
+using VirtualClassApp.Application.Abstractions.Repositories.Courses;
 using VirtualClassApp.Application.Abstractions.Repositories.Students;
 using VirtualClassApp.Application.Abstractions.Repositories.Teachers;
 using VirtualClassApp.Domain.Entities;
 using VirtualClassApp.Persistence.Contexts;
 using VirtualClassApp.Persistence.Interceptors;
 using VirtualClassApp.Persistence.Repositories;
+using VirtualClassApp.Persistence.Repositories.Courses;
 using VirtualClassApp.Persistence.Repositories.Students;
 using VirtualClassApp.Persistence.Repositories.Teachers;
 
@@ -20,6 +22,8 @@ public static class ServiceRegistration
         services.AddScoped<ITeacherRepository, TeacherRepository>();
 
         services.AddScoped<IStudentRepository, StudentRepository>();
+
+        services.AddScoped<ICourseRepository, CourseRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

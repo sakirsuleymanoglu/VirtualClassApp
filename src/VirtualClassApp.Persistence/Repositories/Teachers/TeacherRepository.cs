@@ -18,8 +18,6 @@ public sealed class TeacherRepository(ApplicationDbContext context) : Repository
         int count;
         var query = Query;
 
-        query = query.Include(x => x.Courses);
-
         if (parametersAction == null)
         {
             students = await query.ToListAsync(cancellationToken);
