@@ -40,4 +40,4 @@ public sealed class GetAllParameters<T> where T : class, IEntity, new()
 public record Pagination(int Page, int Size);
 public record Filter<T>(Expression<Func<T, bool>> Expression);
 
-public record OrderBy<T>(Expression<Func<T, object>> Expression, bool isDescending = false);
+public record OrderBy<T>(Expression<Func<T, object>> Expression, bool IsDescending = false);

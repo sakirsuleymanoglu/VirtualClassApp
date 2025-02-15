@@ -20,7 +20,7 @@ public static class QueryableExtensions
         {
             if (i == 0)
             {
-                if (!orderBies[i].isDescending)
+                if (!orderBies[i].IsDescending)
                 {
                     query = query.OrderBy(orderBies[i].Expression);
                 }
@@ -31,7 +31,7 @@ public static class QueryableExtensions
             }
             else
             {
-                if (!orderBies[i].isDescending)
+                if (!orderBies[i].IsDescending)
                 {
                     query = ((IOrderedQueryable<T>)query).ThenBy(orderBies[i].Expression);
                 }
