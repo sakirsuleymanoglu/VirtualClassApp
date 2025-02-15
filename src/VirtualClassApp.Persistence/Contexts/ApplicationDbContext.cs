@@ -14,9 +14,10 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser, Ap
 
 
     public DbSet<Course> Courses { get; set; }
-    public DbSet<Teacher> Teachers { get; set; }
-    public DbSet<Student> Students { get; set; }
+    
     public DbSet<SocialMedia> SocialMedias { get; set; }
+
+    public DbSet<Teaching> Teachings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

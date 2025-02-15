@@ -12,10 +12,9 @@ builder.Services.AddPersistenceServices(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddCors(x => x.AddDefaultPolicy(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(x => true)));
+builder.Services.AddAppCors();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -28,7 +27,10 @@ app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 
-app.MapEndpoints(new CoursesEndpointsMapper(BaseRoutes.Courses));
+app.MapEndpoints(
+    new CoursesEndpointsMapper(BaseRoutes.Courses),
+    new UsersEndpointsMapper(BaseRoutes.Users)
+    );
 
 app.Run();
 

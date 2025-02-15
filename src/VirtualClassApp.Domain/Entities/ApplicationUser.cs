@@ -9,6 +9,8 @@ public class ApplicationUser : IdentityUser<Guid>, IEntity
     {
         Id = Guid.NewGuid();
         SocialMedias = [];
+        StudentTeachings = [];
+        TeacherTeachings = [];
     }
 
     public string? Name { get; set; }
@@ -23,4 +25,7 @@ public class ApplicationUser : IdentityUser<Guid>, IEntity
     public DateTime? DeletedDate { get; set; }
 
     public bool IsActive { get; set; }
+
+    public ICollection<Teaching> StudentTeachings { get; set; }
+    public ICollection<Teaching> TeacherTeachings { get; set; }
 }

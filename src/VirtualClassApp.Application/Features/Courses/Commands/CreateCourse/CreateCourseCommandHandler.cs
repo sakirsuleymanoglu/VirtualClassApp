@@ -15,7 +15,13 @@ public sealed class CreateCourseCommandHandler(ICourseRepository courseRepositor
             Title = request.Title,
             Description = request.Description,
             IsActive = request.IsActive,
-            Teachers = [.. request.TeacherIds.Select(id => new Teacher { Id = id })]
+            Teaching = new Teaching()
+            {
+                Teachers = [.. request.TeacherIds.Select(id => new ApplicationUser
+                {
+                    Id = id
+                })]
+            }
         }, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

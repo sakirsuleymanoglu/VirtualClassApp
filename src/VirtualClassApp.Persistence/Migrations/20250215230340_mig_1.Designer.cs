@@ -12,7 +12,7 @@ using VirtualClassApp.Persistence.Contexts;
 namespace VirtualClassApp.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250124001039_mig_1")]
+    [Migration("20250215230340_mig_1")]
     partial class mig_1
     {
         /// <inheritdoc />
@@ -25,34 +25,34 @@ namespace VirtualClassApp.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CourseStudent", b =>
+            modelBuilder.Entity("ApplicationUserTeaching", b =>
                 {
-                    b.Property<Guid>("CoursesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("StudentsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CoursesId", "StudentsId");
-
-                    b.HasIndex("StudentsId");
-
-                    b.ToTable("CourseStudent");
-                });
-
-            modelBuilder.Entity("CourseTeacher", b =>
-                {
-                    b.Property<Guid>("CoursesId")
+                    b.Property<Guid>("TeacherTeachingsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TeachersId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("CoursesId", "TeachersId");
+                    b.HasKey("TeacherTeachingsId", "TeachersId");
 
                     b.HasIndex("TeachersId");
 
-                    b.ToTable("CourseTeacher");
+                    b.ToTable("TeacherTeaching", (string)null);
+                });
+
+            modelBuilder.Entity("ApplicationUserTeaching1", b =>
+                {
+                    b.Property<Guid>("StudentTeachingsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("StudentTeachingsId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("StudentTeaching", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -174,6 +174,9 @@ namespace VirtualClassApp.Persistence.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -223,16 +226,14 @@ namespace VirtualClassApp.Persistence.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
@@ -291,10 +292,6 @@ namespace VirtualClassApp.Persistence.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("VirtualClassApp.Domain.Entities.Course", b =>
@@ -315,8 +312,14 @@ namespace VirtualClassApp.Persistence.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<Guid>("TeachingId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -325,6 +328,9 @@ namespace VirtualClassApp.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TeachingId")
+                        .IsUnique();
 
                     b.ToTable("Courses");
                 });
@@ -343,6 +349,9 @@ namespace VirtualClassApp.Persistence.Migrations
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -363,46 +372,58 @@ namespace VirtualClassApp.Persistence.Migrations
                     b.ToTable("SocialMedias");
                 });
 
-            modelBuilder.Entity("VirtualClassApp.Domain.Entities.Student", b =>
+            modelBuilder.Entity("VirtualClassApp.Domain.Entities.Teaching", b =>
                 {
-                    b.HasBaseType("VirtualClassApp.Domain.Entities.ApplicationUser");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasDiscriminator().HasValue("Student");
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Teachings");
                 });
 
-            modelBuilder.Entity("VirtualClassApp.Domain.Entities.Teacher", b =>
+            modelBuilder.Entity("ApplicationUserTeaching", b =>
                 {
-                    b.HasBaseType("VirtualClassApp.Domain.Entities.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Teacher");
-                });
-
-            modelBuilder.Entity("CourseStudent", b =>
-                {
-                    b.HasOne("VirtualClassApp.Domain.Entities.Course", null)
+                    b.HasOne("VirtualClassApp.Domain.Entities.Teaching", null)
                         .WithMany()
-                        .HasForeignKey("CoursesId")
+                        .HasForeignKey("TeacherTeachingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VirtualClassApp.Domain.Entities.Student", null)
-                        .WithMany()
-                        .HasForeignKey("StudentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseTeacher", b =>
-                {
-                    b.HasOne("VirtualClassApp.Domain.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VirtualClassApp.Domain.Entities.Teacher", null)
+                    b.HasOne("VirtualClassApp.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("TeachersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationUserTeaching1", b =>
+                {
+                    b.HasOne("VirtualClassApp.Domain.Entities.Teaching", null)
+                        .WithMany()
+                        .HasForeignKey("StudentTeachingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VirtualClassApp.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -458,6 +479,17 @@ namespace VirtualClassApp.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VirtualClassApp.Domain.Entities.Course", b =>
+                {
+                    b.HasOne("VirtualClassApp.Domain.Entities.Teaching", "Teaching")
+                        .WithOne("Course")
+                        .HasForeignKey("VirtualClassApp.Domain.Entities.Course", "TeachingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Teaching");
+                });
+
             modelBuilder.Entity("VirtualClassApp.Domain.Entities.SocialMedia", b =>
                 {
                     b.HasOne("VirtualClassApp.Domain.Entities.ApplicationUser", "ApplicationUser")
@@ -472,6 +504,12 @@ namespace VirtualClassApp.Persistence.Migrations
             modelBuilder.Entity("VirtualClassApp.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("SocialMedias");
+                });
+
+            modelBuilder.Entity("VirtualClassApp.Domain.Entities.Teaching", b =>
+                {
+                    b.Navigation("Course")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -10,18 +10,18 @@ namespace VirtualClassApp.Persistence.Repositories.Courses;
 
 public sealed class CourseRepository(ApplicationDbContext context) : Repository<Course>(context), ICourseRepository
 {
-    protected override IQueryable<Course> Query => Table.AsNoTrackingWithIdentityResolution().Include(course => course.Teachers);
+    protected override IQueryable<Course> Query => Table.AsNoTrackingWithIdentityResolution().Include(course => course.Teaching.Teachers);
 
     public override async Task AddAsync(Course entity, CancellationToken cancellationToken = default)
     {
-        HashSet<Teacher> teachers = [];
+        HashSet<ApplicationUser> teachers = [];
 
-        foreach (var teacher in entity.Teachers)
+        foreach (var teacher in entity.Teaching.Teachers)
         {
-            teachers.Add(await Context.Teachers.SingleAsync(teacher => teacher.Id == teacher.Id, cancellationToken));
+            teachers.Add(await Context.Users.SingleAsync(teacher => teacher.Id == teacher.Id, cancellationToken));
         }
 
-        entity.Teachers = teachers;
+        entity.Teaching.Teachers = teachers;
 
         await Table.AddAsync(entity, cancellationToken);
     }
