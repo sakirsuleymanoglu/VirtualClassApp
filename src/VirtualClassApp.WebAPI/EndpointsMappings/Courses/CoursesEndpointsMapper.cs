@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using VirtualClassApp.Application.Abstractions.Repositories.Courses;
 using VirtualClassApp.Application.Abstractions.Repositories.Parameters;
+using VirtualClassApp.Application.Dtos.Courses;
 using VirtualClassApp.Application.Features.Courses.Commands.CreateCourse;
-using VirtualClassApp.Domain.Entities;
+using VirtualClassApp.Application.Features.Courses.Commands.UpdateCourse;
+using VirtualClassApp.Application.Features.Courses.Queries.GetCourseById;
+using VirtualClassApp.Application.Features.Courses.Queries.GetCourses;
 using VirtualClassApp.WebAPI.EndpointsMappings.Abstractions;
 
 namespace VirtualClassApp.WebAPI.EndpointsMappings.Courses;
@@ -14,108 +14,96 @@ public sealed class CoursesEndpointsMapper(string baseRoute) :
 {
     public override void MapEndpoints(WebApplication app)
     {
-        app.MapPost(BaseRoute, async (CreateCourseCommand request, ISender sender) =>
+        app.MapPost(BaseRoute, async (CreateCourseRequest request, ISender sender) =>
         {
             await sender.Send(request);
 
             return Results.Ok();
         });
 
-
-        app.MapGet(BaseRoute, async (ICourseRepository courseRepository) =>
+        app.MapPut(BaseRoute, async (UpdateCourseRequest request, ISender sender) =>
         {
-            var courses = await courseRepository.GetAllAsync();
+            await sender.Send(request);
 
-            var _courses = courses.Items.Select(x => new
+            return Results.Ok();
+        });
+
+        app.MapGet(BaseRoute, async (ISender sender, int pageNumber = 1, int pageSize = 10) =>
+        {
+            var request = new GetCoursesRequest((parameters) =>
             {
-                x.Id,
-                x.Title,
-                x.Description,
-                x.IsActive,
-                Teachers = x.Teaching.Teachers.Select(x => new
-                {
-                    x.Id,
-                    x.UserName,
-                    x.Email
-                }).ToList()
+                parameters.SetPagination(new Pagination(pageNumber, pageSize));
+                parameters.SetIsDeleted(false);
             });
 
-            return Results.Ok(_courses);
+            var response = await sender.Send(request);
+
+            return Results.Ok(new CoursesPaginationResult
+            {
+                Items = response.Courses,
+                TotalCount = response.Count,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            });
         });
 
-        app.MapGet($"{BaseRoute}/deleted", async (ICourseRepository courseRepository) =>
+        app.MapGet(BaseRoute + "/deleted", async (ISender sender, int pageNumber = 1, int pageSize = 10) =>
         {
-            var courses = await courseRepository.GetAllAsync(x =>
+            var request = new GetCoursesRequest((parameters) =>
             {
-                x.AddFilter(new Filter<Course>(x => x.IsDeleted));
+                parameters.SetPagination(new Pagination(pageNumber, pageSize));
+                parameters.SetIsDeleted(true);
             });
 
-            var _courses = courses.Items.Select(x => new
+            var response = await sender.Send(request);
+
+            return Results.Ok(new CoursesPaginationResult
             {
-                x.Id,
-                x.Title,
-                x.Description,
-                x.IsActive,
-                Teachers = x.Teaching.Teachers.Select(x => new
-                {
-                    x.Id,
-                    x.UserName,
-                    x.Email
-                }).ToList()
+                Items = response.Courses,
+                TotalCount = response.Count,
+                PageSize = pageSize,
+                PageNumber = pageNumber
             });
-
-            return Results.Ok(_courses);
         });
 
-
-
-
-        app.MapGet(BaseRoute + "/{id:guid}", async (ICourseRepository courseRepository, Guid id) =>
+        app.MapGet(BaseRoute + "/{id:guid}", async (ISender sender, Guid id) =>
         {
-            var course = await courseRepository.GetAsync(
-            [
-                new Filter<Course>(x => x.Id == id)
-            ]);
+            var request = new GetCourseByIdRequest(id, false);
 
-            if (course == null)
-            {
-                return Results.NotFound();
-            }
+            var response = await sender.Send(request);
 
-            var _course = new
-            {
-                course.Id,
-                course.Title,
-                course.Description,
-                course.IsActive,
-                Teachers = course.Teaching.Teachers.Select(x => new
-                {
-                    x.Id,
-                    x.UserName,
-                    x.Email
-                }).ToList()
-            };
-
-
-            return Results.Ok(_course);
+            return Results.Ok(response);
         });
 
 
-        app.MapGet(BaseRoute + "/{id:guid}/teachers", async (UserManager<ApplicationUser> userManager, Guid id) =>
-        {
-            var teachers = await userManager.Users.AsNoTrackingWithIdentityResolution()
-            .Where(x => x.TeacherTeachings.Any(x => x.Course.Id == id)).ToListAsync();
+        //app.MapGet(BaseRoute + "/{id:guid}/teachers", async (UserManager<ApplicationUser> userManager, Guid id) =>
+        //{
+        //    var teachers = await userManager.Users.AsNoTrackingWithIdentityResolution()
+        //    .Where(x => x.TeacherTeachings.Any(x => x.Course.Id == id)).ToListAsync();
 
-            var _teachers = teachers.Select(x => new
-            {
-                x.Id,
-                x.UserName,
-                x.Email
-            }).ToList();
+        //    var _teachers = teachers.Select(x => new
+        //    {
+        //        x.Id,
+        //        x.UserName,
+        //        x.Email
+        //    }).ToList();
 
-            return Results.Ok(_teachers);
-        });
+        //    return Results.Ok(_teachers);
+        //});
 
+        //app.MapGet(BaseRoute + "/{id:guid}/students", async (UserManager<ApplicationUser> userManager, Guid id) =>
+        //{
+        //    var students = await userManager.Users.AsNoTrackingWithIdentityResolution()
+        //    .Where(x => x.StudentTeachings.Any(x => x.Course.Id == id)).ToListAsync();
 
+        //    var _students = students.Select(x => new
+        //    {
+        //        x.Id,
+        //        x.UserName,
+        //        x.Email
+        //    }).ToList();
+
+        //    return Results.Ok(_students);
+        //});
     }
 }

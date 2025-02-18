@@ -2,7 +2,7 @@
 
 namespace VirtualClassApp.Application.Features.Users.Commands.CreateUser;
 
-public record CreateUserCommand(
+public record CreateUserRequest(
     string UserName,
     string Email,
-    string Password) : IRequest;
+    string Password) : IRequest<CreateUserResponse>;

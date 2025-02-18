@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using VirtualClassApp.Domain.Abstractions.Entities;
 
-namespace VirtualClassApp.Domain.Entities;
+namespace VirtualClassApp.Persistence;
 
-public class ApplicationRole : IdentityRole<Guid>, IEntity
+public sealed class ApplicationRole : IdentityRole<Guid>, IEntity
 {
     public DateTime? CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }

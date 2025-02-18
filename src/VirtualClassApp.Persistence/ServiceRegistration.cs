@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtualClassApp.Application.Abstractions.Repositories;
 using VirtualClassApp.Application.Abstractions.Repositories.Courses;
-using VirtualClassApp.Domain.Entities;
+
 using VirtualClassApp.Persistence.Contexts;
 using VirtualClassApp.Persistence.Interceptors;
 using VirtualClassApp.Persistence.Repositories;
@@ -15,8 +15,6 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
-
-
         services.AddScoped<ICourseRepository, CourseRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

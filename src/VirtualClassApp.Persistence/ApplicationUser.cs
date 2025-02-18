@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using VirtualClassApp.Domain.Abstractions.Entities;
+using VirtualClassApp.Persistence.Adapters;
 
-namespace VirtualClassApp.Domain.Entities;
+namespace VirtualClassApp.Persistence;
 
-public class ApplicationUser : IdentityUser<Guid>, IEntity
+public sealed class ApplicationUser : IdentityUser<Guid>
 {
     public ApplicationUser()
     {
-        Id = Guid.NewGuid();
+
         SocialMedias = [];
         StudentTeachings = [];
         TeacherTeachings = [];
@@ -18,7 +18,7 @@ public class ApplicationUser : IdentityUser<Guid>, IEntity
     public string? Biography { get; set; }
 
     public string? AvatarPath { get; set; }
-    public ICollection<SocialMedia> SocialMedias { get; set; }
+    public ICollection<SocialMediaAdapter> SocialMedias { get; set; }
     public DateTime? CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
     public bool IsDeleted { get; set; }
@@ -26,6 +26,6 @@ public class ApplicationUser : IdentityUser<Guid>, IEntity
 
     public bool IsActive { get; set; }
 
-    public ICollection<Teaching> StudentTeachings { get; set; }
-    public ICollection<Teaching> TeacherTeachings { get; set; }
+    public ICollection<TeachingAdapter> StudentTeachings { get; set; }
+    public ICollection<TeachingAdapter> TeacherTeachings { get; set; }
 }

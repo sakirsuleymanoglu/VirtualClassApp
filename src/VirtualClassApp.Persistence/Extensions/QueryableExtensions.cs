@@ -4,7 +4,7 @@ namespace VirtualClassApp.Persistence.Extensions;
 
 public static class QueryableExtensions
 {
-    public static IQueryable<T> Pagination<T>(this IQueryable<T> query, Pagination pagination) where T : class => query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size);
+    public static IQueryable<T> Pagination<T>(this IQueryable<T> query, Pagination pagination) where T : class => query.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
 
     public static IQueryable<T> Filters<T>(this IQueryable<T> query, List<Filter<T>> filters) where T : class
     {

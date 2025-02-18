@@ -1,43 +1,52 @@
 ﻿using System.Linq.Expressions;
-using VirtualClassApp.Domain.Abstractions.Entities;
 
 namespace VirtualClassApp.Application.Abstractions.Repositories.Parameters;
 
-public sealed class GetAllParameters<T> where T : class, IEntity, new()
+public class GetAllParameters
 {
     private Pagination? _pagination;
+    private bool? _isActive;
+    private bool? _isDeleted;
 
-    private List<Filter<T>>? _filters;
-    private List<OrderBy<T>>? _orderBies;
-
-    public List<Filter<T>>? Filters => _filters;
     public Pagination? Pagination => _pagination;
+    public bool? IsActive => _isActive;
+    public bool? IsDeleted => _isDeleted;
 
-    public List<OrderBy<T>>? OrderBies => _orderBies;
+    public Date? CreatedDate => _createdDate;
 
-    public GetAllParameters<T> SetPagination(Pagination pagination)
+    public Date? _createdDate;
+
+
+    public GetAllParameters SetPagination(Pagination pagination)
     {
         _pagination = pagination;
         return this;
     }
 
-    public GetAllParameters<T> AddFilter(Filter<T> filter)
+    public GetAllParameters SetIsActive(bool isActive)
     {
-        _filters ??= [];
-        _filters.Add(filter);
+        _isActive = isActive;
         return this;
     }
 
-    public GetAllParameters<T> AddOrderBy(OrderBy<T> orderBy)
+    public GetAllParameters SetIsDeleted(bool isDeleted)
     {
-        _orderBies ??= [];
-        _orderBies.Add(orderBy);
+        _isDeleted = isDeleted;
+        return this;
+    }
+
+    public GetAllParameters SetCreatedDate(Date createdDate)
+    {
+        _createdDate = createdDate;
         return this;
     }
 }
 
 
-public record Pagination(int Page, int Size);
+public record Pagination(int PageNumber, int PageSize);
 public record Filter<T>(Expression<Func<T, bool>> Expression);
 
 public record OrderBy<T>(Expression<Func<T, object>> Expression, bool IsDescending = false);
+
+
+public record Date(DateTime Start, DateTime End);

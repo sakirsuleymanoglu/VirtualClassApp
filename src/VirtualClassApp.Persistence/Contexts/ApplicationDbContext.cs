@@ -1,23 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using VirtualClassApp.Domain.Entities;
+using VirtualClassApp.Persistence.Adapters;
 
 namespace VirtualClassApp.Persistence.Contexts;
 
-public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
+    public DbSet<CourseAdapter> Courses { get; set; }
 
-    }
+    public DbSet<SocialMediaAdapter> SocialMedias { get; set; }
 
-
-    public DbSet<Course> Courses { get; set; }
-    
-    public DbSet<SocialMedia> SocialMedias { get; set; }
-
-    public DbSet<Teaching> Teachings { get; set; }
+    public DbSet<TeachingAdapter> Teachings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

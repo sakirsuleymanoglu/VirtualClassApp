@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using VirtualClassApp.Domain.Entities;
+using VirtualClassApp.Persistence.Adapters;
 
 namespace VirtualClassApp.Persistence.Configurations;
 
-public sealed class CourseConfiguration : IEntityTypeConfiguration<Course>
+public sealed class CourseAdapterConfiguration : IEntityTypeConfiguration<CourseAdapter>
 {
-    public void Configure(EntityTypeBuilder<Course> builder)
+    public void Configure(EntityTypeBuilder<CourseAdapter> builder)
     {
         builder.HasOne(x => x.Teaching)
-            .WithOne(x => x.Course).HasForeignKey<Course>(x => x.TeachingId);
+            .WithOne(x => x.Course).HasForeignKey<CourseAdapter>(x => x.TeachingId);
     }
 }

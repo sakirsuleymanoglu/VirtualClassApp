@@ -1,5 +1,6 @@
-﻿using VirtualClassApp.Domain.Abstractions.Entities;
+﻿using VirtualClassApp.Application.Abstractions.Repositories.Parameters;
 
 namespace VirtualClassApp.Application.Abstractions.Repositories.Responses;
 
-public record GetAllResponse<T>(IEnumerable<T> Items, int Count) where T : class, IEntity, new();
+public record GetAllResponse<T>(
+    GetAllParameters GetAllParameters, List<T> Items, int Count);

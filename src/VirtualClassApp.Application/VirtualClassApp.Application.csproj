@@ -14,4 +14,8 @@
     <ProjectReference Include="..\VirtualClassApp.Domain\VirtualClassApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstractions\Repositories\Users\" />
+  </ItemGroup>
+
 </Project>
