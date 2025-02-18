@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using VirtualClassApp.Application.Abstractions.Repositories.Parameters;
-using VirtualClassApp.Application.Dtos.Courses;
 using VirtualClassApp.Application.Features.Courses.Commands.CreateCourse;
 using VirtualClassApp.Application.Features.Courses.Commands.UpdateCourse;
 using VirtualClassApp.Application.Features.Courses.Queries.GetCourseById;
@@ -12,6 +11,14 @@ namespace VirtualClassApp.WebAPI.EndpointsMappings.Courses;
 public sealed class CoursesEndpointsMapper(string baseRoute) :
    EndpointsMapper(baseRoute)
 {
+    private static IResult CoursesPaginationResultOk(GetCoursesResponse response, int pageSize, int pageNumber) => Results.Ok(new CoursesPaginationResult
+    {
+        Items = response.Courses,
+        TotalCount = response.Count,
+        PageSize = pageSize,
+        PageNumber = pageNumber
+    });
+
     public override void MapEndpoints(WebApplication app)
     {
         app.MapPost(BaseRoute, async (CreateCourseRequest request, ISender sender) =>
@@ -38,13 +45,7 @@ public sealed class CoursesEndpointsMapper(string baseRoute) :
 
             var response = await sender.Send(request);
 
-            return Results.Ok(new CoursesPaginationResult
-            {
-                Items = response.Courses,
-                TotalCount = response.Count,
-                PageSize = pageSize,
-                PageNumber = pageNumber
-            });
+            return CoursesPaginationResultOk(response, pageSize, pageNumber);
         });
 
         app.MapGet(BaseRoute + "/deleted", async (ISender sender, int pageNumber = 1, int pageSize = 10) =>
@@ -57,13 +58,7 @@ public sealed class CoursesEndpointsMapper(string baseRoute) :
 
             var response = await sender.Send(request);
 
-            return Results.Ok(new CoursesPaginationResult
-            {
-                Items = response.Courses,
-                TotalCount = response.Count,
-                PageSize = pageSize,
-                PageNumber = pageNumber
-            });
+            return CoursesPaginationResultOk(response, pageSize, pageNumber);
         });
 
         app.MapGet(BaseRoute + "/{id:guid}", async (ISender sender, Guid id) =>
